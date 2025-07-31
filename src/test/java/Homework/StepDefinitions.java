@@ -1,5 +1,7 @@
 package Homework;
 
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.*;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -11,20 +13,29 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 public class StepDefinitions {
 
+    private WebDriver driver;
+
+    @Before
+    public void setup() {
+        WebDriverManager.chromedriver().clearDriverCache().setup();
+        driver = new ChromeDriver();
+    }
+
+    @After
+    public void teardown() {
+        driver.quit();
+    }
+
     @Given("user is in ss.com landing page")
     public void user_is_in_ss_com_landing_page() {
-        // Setup ChromeDriver automatically using WebDriverManager
-        // Clear cache and force download of compatible version
-        WebDriverManager.chromedriver().clearDriverCache().setup();
-        WebDriver driver = new ChromeDriver();
         driver.get("https://www.ss.com/en/");
         String title = driver.getTitle();
         assertThat(driver.getCurrentUrl()).isEqualTo("https://www.ss.com/en/");
         assertThat(title).isEqualTo("Advertisements - SS.COM");
-        //check if all categories are displayed
+        // check if all categories are displayed
         assertThat(driver.findElement(By.xpath("//*[@title='Job and business']")).isDisplayed()).isTrue();
         assertThat(driver.findElement(By.xpath("//*[@title='Transport']")).isDisplayed()).isTrue();
-        assertThat(driver.findElement(By.xpath("//*[@title='Real estate']")).isDisplayed()).isTrue();  
+        assertThat(driver.findElement(By.xpath("//*[@title='Real estate']")).isDisplayed()).isTrue();
         assertThat(driver.findElement(By.xpath("//*[@title='Сonstruction']")).isDisplayed()).isTrue();
         assertThat(driver.findElement(By.xpath("//*[@title='Electronics']")).isDisplayed()).isTrue();
         assertThat(driver.findElement(By.xpath("//*[@title='Clothes, footwear']")).isDisplayed()).isTrue();
@@ -34,22 +45,21 @@ public class StepDefinitions {
         assertThat(driver.findElement(By.xpath("//*[@title='Animals']")).isDisplayed()).isTrue();
         assertThat(driver.findElement(By.xpath("//*[@title='Agriculture']")).isDisplayed()).isTrue();
         assertThat(driver.findElement(By.xpath("//*[@title='Rest, hobbies']")).isDisplayed()).isTrue();
-        driver.quit();
     }
 
     @When("User finds an interesting ad")
     public void user_finds_an_interesting_ad() {
-        
+
     }
 
     @When("ads it to Favorites")
     public void ads_it_to_favorites() {
-        
+
     }
 
     @Then("ad is successfully added to Favorites")
     public void ad_is_successfully_added_to_favorites() {
-     
+
     }
-    
+
 }
