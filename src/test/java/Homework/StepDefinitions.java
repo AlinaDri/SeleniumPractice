@@ -47,13 +47,18 @@ public class StepDefinitions {
         assertThat(driver.findElement(By.xpath("//*[@title='Rest, hobbies']")).isDisplayed()).isTrue();
     }
 
-    @When("User finds an interesting ad")
+    @When("user navigates to category {string}")
+    public void user_navigates_to_category(String category) {
+
+    }
+
+    @When("user finds an interesting ad")
     public void user_finds_an_interesting_ad() {
 
     }
 
     @When("ads it to Favorites")
-    public void ads_it_to_favorites() {
+    public void user_adds_ad_to_favorites() {
 
     }
 
