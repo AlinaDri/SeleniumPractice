@@ -3,7 +3,7 @@ Feature: Test Favorites functionality
 
     Scenario: Add an ad to Favorites via Categories
         Given user is in ss.com landing page
-        When user navigates to category "Vehicles"
+        When user navigates to category "Transport"
         And user finds an interesting ad
         And ads it to Favorites
         Then ad is successfully added to Favorites

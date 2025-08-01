@@ -7,9 +7,12 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.Select;
 
 public class StepDefinitions {
 
@@ -32,7 +35,6 @@ public class StepDefinitions {
         String title = driver.getTitle();
         assertThat(driver.getCurrentUrl()).isEqualTo("https://www.ss.com/en/");
         assertThat(title).isEqualTo("Advertisements - SS.COM");
-        // check if all categories are displayed
         assertThat(driver.findElement(By.xpath("//*[@title='Job and business']")).isDisplayed()).isTrue();
         assertThat(driver.findElement(By.xpath("//*[@title='Transport']")).isDisplayed()).isTrue();
         assertThat(driver.findElement(By.xpath("//*[@title='Real estate']")).isDisplayed()).isTrue();
@@ -49,12 +51,25 @@ public class StepDefinitions {
 
     @When("user navigates to category {string}")
     public void user_navigates_to_category(String category) {
-
+        driver.findElement(By.xpath("//*[@title='" + category + "']")).click();
+        assertThat(driver.getCurrentUrl()).contains(category.toLowerCase());
     }
 
     @When("user finds an interesting ad")
     public void user_finds_an_interesting_ad() {
-
+        driver.findElement(By.xpath("//*[@title='Cars, Advertisements']")).click();
+        assertThat(driver.getCurrentUrl()).contains("cars");
+        driver.findElement(By.xpath("//*[@title='Audi, Advertisements']")).click();
+        assertThat(driver.getCurrentUrl()).contains("audi");
+        WebElement selectElement = driver.findElement(By.xpath("//span[text()='Model:']//select[@class='filter_sel']"));
+        Select select = new Select(selectElement);
+        select.selectByVisibleText("80");
+        assertThat(driver.getCurrentUrl()).contains("80");
+        WebElement firstAdLink = driver.findElement(By.xpath("//table//tr[td//a[contains(@href, '/msg/')]][1]/td[3]//a"));
+        String adText = firstAdLink.getText();
+        firstAdLink.click();
+        assertThat(driver.getCurrentUrl()).contains("msg/en/transport/cars/audi/80/");
+        assertThat(driver.findElement(By.xpath("//*[@id='msg_div_msg']")).getText()).contains(adText);
     }
 
     @When("ads it to Favorites")
