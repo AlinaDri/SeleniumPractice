@@ -11,10 +11,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import Homework.utils.SeleniumUtils;
 
@@ -29,7 +26,7 @@ public class StepDefinitions {
     public void setup() {
         WebDriverManager.chromedriver().clearDriverCache().setup();
         driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, 10); // Use seconds as int instead of Duration
+        wait = new WebDriverWait(driver, 10);
         seleniumUtils = new SeleniumUtils(driver, wait);
     }
 
@@ -80,13 +77,8 @@ public class StepDefinitions {
 
     @When("ads it to Favorites")
     public void user_adds_ad_to_favorites() {
-        seleniumUtils.waitAndClick(By.id("add-to-favorites-lnk"));
-        WebElement alertAccept = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='alert_ok']")));
-        alertAccept.click();
-        WebElement favoritesCounter = driver.findElement(By.id("mnu_fav_id"));
-        Actions actions = new Actions(driver);
-        actions.moveToElement(favoritesCounter);
-        assertThat(favoritesCounter.getText()).isEqualTo(" (1)");
+        seleniumUtils.addSingleAdToFavorites();
+        seleniumUtils.verifyFavoritesCount(1);
     }
 
     @Then("ad is successfully added to Favorites")
@@ -109,17 +101,20 @@ public class StepDefinitions {
         seleniumUtils.selectFromDropdown(By.xpath("//select[option[text()='Sell']]"), "Sell");
         assertThat(driver.getCurrentUrl()).contains("sell");
         seleniumUtils.selectFromDropdown(By.xpath("//select[option[text()='3']]"), "3");
-        
+        seleniumUtils.checkFifthColumnInTableRows(3);
     }
 
     @When("ads them to Favorites")
     public void ads_them_to_favorites() {
-
+        seleniumUtils.addMultipleAdsToFavorites(3);
+        seleniumUtils.verifyFavoritesCount(3);
     }
 
     @Then("all ads are successfully added to Favorites")
     public void all_ads_are_successfully_added_to_favorites() {
-
+        seleniumUtils.waitAndClick(By.xpath("//*[@title='Favorites']"));
+        assertThat(driver.getCurrentUrl()).contains("favorites");
+        java.util.List<WebElement> favoriteRows = driver.findElements(By.xpath("//tr[contains(@id, 'tr_')]"));
+        assertThat(favoriteRows.size()).isEqualTo(3);
     }
-
 }
