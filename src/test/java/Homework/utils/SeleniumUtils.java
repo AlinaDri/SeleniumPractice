@@ -38,4 +38,9 @@ public class SeleniumUtils {
         WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
         element.click();
     }
+    
+    public void acceptCookieConsent() {
+        WebElement cookieButton = driver.findElement(By.xpath("//button[text()='Accept and continue']"));
+        cookieButton.click();
+    }
 }

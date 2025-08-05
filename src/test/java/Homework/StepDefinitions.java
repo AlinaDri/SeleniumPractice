@@ -15,6 +15,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+
 import Homework.utils.SeleniumUtils;
 
 public class StepDefinitions {
@@ -55,8 +56,7 @@ public class StepDefinitions {
         assertThat(driver.findElement(By.xpath("//*[@title='Animals']")).isDisplayed()).isTrue();
         assertThat(driver.findElement(By.xpath("//*[@title='Agriculture']")).isDisplayed()).isTrue();
         assertThat(driver.findElement(By.xpath("//*[@title='Rest, hobbies']")).isDisplayed()).isTrue();
-        WebElement cookieButton = driver.findElement(By.xpath("//button[text()='Accept and continue']"));
-        cookieButton.click();
+        seleniumUtils.acceptCookieConsent();
     }
 
     @When("user navigates to category {string}")
@@ -106,19 +106,20 @@ public class StepDefinitions {
         seleniumUtils.clickByTitleAndVerifyUrl("Flats, Advertisements", "flats");
         seleniumUtils.clickByTitleAndVerifyUrl("Riga, Advertisements", "riga");
         seleniumUtils.clickByTitleAndVerifyUrl("Teika, Advertisements", "teika");
-        //WebElement selectElement = driver.findElement(By.xpath("//span[text()='Deal type:']//select[@class='filter_sel']"));
-        //Select select = new Select(selectElement);
-
+        seleniumUtils.selectFromDropdown(By.xpath("//select[option[text()='Sell']]"), "Sell");
+        assertThat(driver.getCurrentUrl()).contains("sell");
+        seleniumUtils.selectFromDropdown(By.xpath("//select[option[text()='3']]"), "3");
+        
     }
 
     @When("ads them to Favorites")
     public void ads_them_to_favorites() {
-        
+
     }
 
     @Then("all ads are successfully added to Favorites")
     public void all_ads_are_successfully_added_to_favorites() {
-        
+
     }
 
 }
