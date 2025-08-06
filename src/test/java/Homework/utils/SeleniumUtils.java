@@ -95,4 +95,41 @@ public class SeleniumUtils {
         WebElement favoritesCounter = driver.findElement(By.id("mnu_fav_id"));
         assertThat(favoritesCounter.getText()).isEqualTo(" (" + expectedCount + ")");
     }
+
+    public void performAdvancedSearch(io.cucumber.datatable.DataTable dataTable) {
+        java.util.Map<String, String> searchData = dataTable.asMap(String.class, String.class);
+        
+        for (java.util.Map.Entry<String, String> entry : searchData.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue().replace("\"", "");
+            
+            switch (key) {
+                case "Searched word or phrase:":
+                    WebElement searchInput = driver.findElement(By.name("txt"));
+                    searchInput.clear();
+                    searchInput.sendKeys(value);
+                    break;
+                case "Section":
+                    selectFromDropdown(By.name("cid_0"), value); 
+                    break;
+                case "Category":
+                    selectFromDropdown(By.name("cid_1"), value); 
+                    break;
+                case "Deal type":
+                    selectFromDropdown(By.name("sid"), value); 
+                    break;
+                case "City, area":
+                    selectFromDropdown(By.name("search_region"), value); 
+                    break;
+                case "Search for the period":
+                    selectFromDropdown(By.name("pr"), value); 
+                    break;
+            }
+        }
+        driver.findElement(By.xpath("//input[@type='submit' and @value='Search']")).click();
+    }
+
+    public void waitForElement(By locator) {
+        wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+    }
 }
