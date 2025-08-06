@@ -21,6 +21,8 @@ public class StepDefinitions {
     private WebDriverWait wait;
     private String adText;
     private SeleniumUtils seleniumUtils;
+    private String searchTerm;
+    private String searchCity;
 
     @Before
     public void setup() {
@@ -117,4 +119,46 @@ public class StepDefinitions {
         java.util.List<WebElement> favoriteRows = driver.findElements(By.xpath("//tr[contains(@id, 'tr_')]"));
         assertThat(favoriteRows.size()).isEqualTo(3);
     }
+
+    @When("user performs advanced search:")
+    public void user_performs_advanced_search(io.cucumber.datatable.DataTable dataTable) {
+        java.util.Map<String, String> searchData = dataTable.asMap(String.class, String.class);
+        
+        // Store search parameters for later verification
+        searchTerm = searchData.get("Searched word or phrase:").replace("\"", "");
+        searchCity = searchData.get("City, area");
+        
+        seleniumUtils.performAdvancedSearch(dataTable);
+    }
+
+    @When("user finds necessary ad")
+    public void user_finds_necessary_ad() {
+        seleniumUtils.waitForElement(By.xpath("//table//tr[td//a[contains(@href, '/msg/')]]"));
+        
+        WebElement firstAd = driver.findElement(By.xpath("//table//tr[td//a[contains(@href, '/msg/')]][1]"));
+        
+        // Use stored search parameters for verification
+        WebElement categoryElement = firstAd.findElement(By.xpath(".//div[@class='ads_cat_names']"));
+        String categoryText = categoryElement.getText();
+        assertThat(categoryText.toLowerCase()).contains(searchTerm.toLowerCase());
+        
+        WebElement regionElement = firstAd.findElement(By.xpath(".//div[@class='ads_region']"));
+        String regionText = regionElement.getText();
+        assertThat(regionText.toLowerCase()).contains(searchCity.toLowerCase());
+        
+        // Rest of the implementation...
+        WebElement adLink = firstAd.findElement(By.xpath(".//a[contains(@href, '/msg/')]"));
+        adText = adLink.getText();
+        adLink.click();
+        
+        seleniumUtils.waitForElement(By.xpath("//*[@id='msg_div_msg']"));
+        assertThat(driver.getCurrentUrl()).contains("/msg/");
+    }
+
+    @When("user clicks {string}")
+    public void user_clicks(String string) {
+        WebElement element = driver.findElement(By.xpath("//*[contains(@title, '" + string + "') or text()='" + string + "']"));
+        element.click();
+    }
+
 }
